@@ -1,7 +1,7 @@
 import os
 import logging
 from telegram import Update
-from telegram.ext import Updater, CommandHandler, CallbackContext
+from telegram.ext import Application, CommandHandler, ContextTypes
 
 # Настройка логирования
 logging.basicConfig(
@@ -17,22 +17,22 @@ TOKEN = '7505260246:AAHmg0mZ3apMvYSQPCIrbnmE7AEvN23xDeo'
 FILE_PATH = os.path.expanduser('~/BetaTest/database/database.db')
 
 
-def start(update: Update, context: CallbackContext) -> None:
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Обработчик команды /start"""
-    update.message.reply_text('Привет! Используй /getdb чтобы получить файл базы данных.')
+    await update.message.reply_text('Привет! Используй /getdb чтобы получить файл базы данных.')
 
 
-def get_db(update: Update, context: CallbackContext) -> None:
+async def get_db(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Обработчик команды /getdb для отправки файла базы данных"""
     try:
         # Проверяем существование файла
         if not os.path.exists(FILE_PATH):
-            update.message.reply_text('Файл базы данных не найден!')
+            await update.message.reply_text('Файл базы данных не найден!')
             return
 
         # Отправляем файл
         with open(FILE_PATH, 'rb') as file:
-            update.message.reply_document(
+            await update.message.reply_document(
                 document=file,
                 filename='database.db',
                 caption='Вот ваш файл базы данных'
@@ -41,22 +41,21 @@ def get_db(update: Update, context: CallbackContext) -> None:
 
     except Exception as e:
         logger.error("Ошибка при отправке файла: %s", str(e))
-        update.message.reply_text('Произошла ошибка при отправке файла.')
+        await update.message.reply_text('Произошла ошибка при отправке файла.')
 
 
 def main() -> None:
     """Запуск бота"""
-    updater = Updater(TOKEN)
-    dispatcher = updater.dispatcher
+    # Создаем Application
+    application = Application.builder().token(TOKEN).build()
 
     # Регистрация обработчиков команд
-    dispatcher.add_handler(CommandHandler("start", start))
-    dispatcher.add_handler(CommandHandler("getdb", get_db))
+    application.add_handler(CommandHandler("start", start))
+    application.add_handler(CommandHandler("getdb", get_db))
 
     # Запуск бота
-    updater.start_polling()
     logger.info("Бот запущен и работает...")
-    updater.idle()
+    application.run_polling()
 
 
 if __name__ == '__main__':
