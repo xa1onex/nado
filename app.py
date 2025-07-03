@@ -14,8 +14,8 @@ logger = logging.getLogger(__name__)
 # Конфигурация
 TOKEN = '7505260246:AAHmg0mZ3apMvYSQPCIrbnmE7AEvN23xDeo'
 ADMIN_IDS = [5387020491]  # Замените на ID вашего аккаунта в Telegram
-FILE_PATH = os.path.expanduser('~/BetaTest/database/database.db')
-BACKUP_PATH = os.path.expanduser('~/BetaTest/database/database_backup.db')
+FILE_PATH = os.path.expanduser('~/xVPN_bot/database/database.db')
+BACKUP_PATH = os.path.expanduser('~/xVPN_bot/database/database_backup.db')
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
